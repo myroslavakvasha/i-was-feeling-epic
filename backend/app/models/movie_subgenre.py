@@ -13,7 +13,7 @@ class Source(enum.Enum):
     llm = "llm"
     
 class MovieSubgenre(Base):
-    __tablename__ = "moviesubgenre"
+    __tablename__ = "movie_subgenre"
 
     movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id", ondelete="CASCADE"), primary_key=True)
     subgenre_id: Mapped[int] = mapped_column(ForeignKey("subgenre.id", ondelete="CASCADE"), primary_key=True, index=True)

@@ -1,0 +1,27 @@
+SUBGENRES: list[tuple[str, str]] = [
+    ("slasher", "Slasher"),
+    ("psychological", "Psychological"),
+    ("slow-burn", "Slow Burn"),
+    ("haunted-house", "Haunted House"),
+    ("ghost-supernatural", "Ghost / Supernatural"),
+    ("possession-exorcism", "Possession / Exorcism"),
+    ("occult-cult", "Occult / Cult"),
+    ("folk-horror", "Folk Horror"),
+    ("witchcraft", "Witchcraft"),
+    ("found-footage", "Found Footage"),
+    ("body-horror", "Body Horror"),
+    ("creature-feature", "Creature Feature"),
+    ("zombie-infection", "Zombie / Infection"),
+    ("vampire-werewolf", "Vampire / Werewolf"),
+    ("survival-horror", "Survival Horror"),
+    ("home-invasion", "Home Invasion"),
+    ("cosmic-horror", "Cosmic Horror"),
+    ("sci-fi-horror", "Sci-Fi Horror"),
+    ("gothic", "Gothic"),
+    ("serial-killer-thriller", "Serial Killer / Thriller"),
+    ("horror-comedy", "Horror Comedy"),
+    ("anthology", "Anthology"),
+    ("elevated-horror", "Elevated Horror"),
+]
+
+SUBGENRE_SLUGS: set[str] = {slug for slug, _ in SUBGENRES}

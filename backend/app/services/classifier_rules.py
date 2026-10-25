@@ -1,3 +1,5 @@
+from app.core.subgenres import SUBGENRE_SLUGS
+
 SUBGENRE_KEYWORDS: dict[str, set[str]] = {
     "slasher":              {"slasher", "slasher killer", "slasher murderer", "slasher ripper"},
     "psychological":        {"psychological horror", "psychological thriller"},
@@ -21,3 +23,5 @@ SUBGENRE_KEYWORDS: dict[str, set[str]] = {
     "horror-comedy":        {"horror comedy", "slasher spoof"},
     "anthology":            {"anthology"},
 }
+
+assert set(SUBGENRE_KEYWORDS) <= SUBGENRE_SLUGS, set(SUBGENRE_KEYWORDS) - SUBGENRE_SLUGS

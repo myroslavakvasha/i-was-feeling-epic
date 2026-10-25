@@ -13,4 +13,4 @@ class Subgenre(Base):
     slug: Mapped[str] = mapped_column(String(50), unique=True)
     name: Mapped[str] = mapped_column(String(100))
 
-    movie_links: Mapped[list["MovieSubgenre"]] = relationship(back_populates="subgenre")
+    movie_links: Mapped[list["MovieSubgenre"]] = relationship(back_populates="subgenre", cascade="all, delete-orphan")
