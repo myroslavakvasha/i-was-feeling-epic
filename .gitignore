@@ -8,6 +8,7 @@ __pycache__/
 # Secrets and local data
 .env
 *.db
+*.bak
 *.sqlite3
 
 # Frontend
