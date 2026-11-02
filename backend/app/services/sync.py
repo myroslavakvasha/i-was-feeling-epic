@@ -38,12 +38,17 @@ def to_movie_fields(details: dict) -> dict:
         "keywords": [k["name"].lower() for k in keywords],
     }
 
-def run(db, client, max_pages=None):
+def run(db, client, genres, min_votes, date_from=None, date_to=None, max_pages=None):
+    filters = {"vote_count.gte": min_votes, "with_runtime.gte": settings.min_runtime}
+    if date_from:
+        filters["primary_release_date.gte"] = date_from
+    if date_to:
+        filters["primary_release_date.lte"] = date_to
+
     page = total_pages = 1
 
     while page <= total_pages:
-        data = client.discover(page, with_genres=settings.genre_selection, 
-                               **{"vote_count.gte": settings.min_vote_count, "with_runtime.gte": settings.min_runtime})
+        data = client.discover(page, with_genres=genres, **filters)
 
         total_pages = min(data["total_pages"], 500)
         if max_pages is not None:
@@ -51,6 +56,10 @@ def run(db, client, max_pages=None):
 
         for item in data["results"]:
             tmdb_id = item["id"]
+
+            existing = movie_repository.get_by_tmdb_id(db, tmdb_id)
+            if existing is not None and existing.synced_at is not None:
+                continue
 
             try:
                 details = client.movie_details(tmdb_id)
@@ -62,7 +71,7 @@ def run(db, client, max_pages=None):
 
             fields = to_movie_fields(details)
 
-            movie = movie_repository.get_by_tmdb_id(db, tmdb_id)
+            movie = existing
             if movie is None:
                 movie = Movie(**fields)
                 movie_repository.add(db, movie)
