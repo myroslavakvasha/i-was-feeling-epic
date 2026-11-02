@@ -7,17 +7,12 @@ import enum
 if TYPE_CHECKING:
     from app.models.movie import Movie
     from app.models.subgenre import Subgenre
-
-class Source(enum.Enum):
-    rules = "rules"
-    llm = "llm"
     
 class MovieSubgenre(Base):
     __tablename__ = "movie_subgenre"
 
     movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id", ondelete="CASCADE"), primary_key=True)
     subgenre_id: Mapped[int] = mapped_column(ForeignKey("subgenre.id", ondelete="CASCADE"), primary_key=True, index=True)
-    source: Mapped[Source] = mapped_column(Enum(Source))
     classifier_version: Mapped[str] = mapped_column(String(20))
 
     movie: Mapped["Movie"] = relationship(back_populates="subgenre_links")

@@ -8,3 +8,13 @@ def get_by_tmdb_id(db: Session, tmdb_id: int) -> Movie | None:
 def add(db: Session, movie: Movie) -> Movie:
     db.add(movie)
     return movie
+
+def list_unclassified(db: Session, limit: int, exclude_ids: set[int]) -> list[Movie]:
+    query = (
+        select(Movie)
+        .where(Movie.classified_at.is_(None))
+        .where(Movie.id.not_in(exclude_ids))
+        .order_by(Movie.id)
+        .limit(limit)
+    )
+    return list(db.scalars(query).all())

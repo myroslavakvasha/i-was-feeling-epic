@@ -1,6 +1,7 @@
 from datetime import date, timezone, datetime
 from app.models.movie import Movie
 from app.repositories import movie_repository
+from app.core.config import settings
 import httpx
 
 def _none_if_empty(value):
@@ -41,7 +42,8 @@ def run(db, client, max_pages=None):
     page = total_pages = 1
 
     while page <= total_pages:
-        data = client.discover(page, with_genres="27|53|9648|18", **{"vote_count.gte": 50, "with_runtime.gte": 60})
+        data = client.discover(page, with_genres=settings.genre_selection, 
+                               **{"vote_count.gte": settings.min_vote_count, "with_runtime.gte": settings.min_runtime})
 
         total_pages = min(data["total_pages"], 500)
         if max_pages is not None:
