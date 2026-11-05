@@ -1,3 +1,5 @@
+# classifying movies into custom subgenres using ollama_client, run by scripts/run_classify.py
+
 import json
 from datetime import datetime, timezone
 
@@ -25,7 +27,6 @@ Subgenres:
 {subgenres_for_prompt()}
 """
 
-
 def build_user_message(movie, use_keywords: bool = True) -> str:
     text = f"Title: {movie.title}\nOverview: {movie.overview}"
     if use_keywords and movie.keywords:
@@ -34,17 +35,23 @@ def build_user_message(movie, use_keywords: bool = True) -> str:
 
 
 def ask_ollama(client: OllamaClient, movie, use_keywords: bool = True) -> list[str]:
-    raw = client.chat(SYSTEM_PROMPT, build_user_message(movie, use_keywords))
-    data = json.loads(raw)
+    try:
+        raw = client.chat(SYSTEM_PROMPT, build_user_message(movie, use_keywords))
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        if not use_keywords:
+            raise   # already tried without keywords, let the loop skip it
+        return ask_ollama(client, movie, use_keywords=False)
+
     slugs = data.get("subgenres", [])
-    valid = [s for s in slugs if s in SUBGENRE_SLUGS][:MAX_LABELS]
+    valid = [s for s in slugs if s in SUBGENRE_SLUGS]
+    valid = list(dict.fromkeys(valid))[:MAX_LABELS]
     if all(s in MODIFIER_SLUGS for s in valid):
-        return []   # only style labels (or none): not a real horror match
+        return []
     return valid
 
-
 def run(db: Session, client: OllamaClient, batch_size: int = 50) -> None:
-    subgenres = subgenre_repository.get_all_by_slug(db)
+    subgenres = subgenre_repository.get_slug_to_subgenre_map(db)
     failed_ids: set[int] = set()
     consecutive_failures = 0
     done = 0

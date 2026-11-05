@@ -1,3 +1,5 @@
+# pulling data from tmdb, run by scripts/run_sync.py
+
 from datetime import date, timezone, datetime
 from app.models.movie import Movie
 from app.repositories import movie_repository
